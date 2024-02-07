@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 function CreateListing() {
 	const [geolocationEnabled, setGeoLocationEnabled] = useState(true);
@@ -110,7 +111,6 @@ function CreateListing() {
 		} else {
 			geolocation.lat = latitude;
 			geolocation.lng = longitude;
-			location = address;
 		}
 
 		// store img in firebase
@@ -161,9 +161,24 @@ function CreateListing() {
 			toast.error('Images failed to upload');
 			return;
 		});
-		console.log(imgUrls);
+
+		const formDataCopy = {
+			...formData,
+			imgUrls,
+			geolocation,
+			timestamp: serverTimestamp(),
+		};
+
+		formDataCopy.location = address;
+		delete formDataCopy.images;
+		delete formDataCopy.address;
+		!formDataCopy.offer && delete formDataCopy.discountedPrice;
+
+		const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
 
 		setLoading(false);
+		toast.success('Listing Saved');
+		navigate(`/category/${formDataCopy.type}/${docRef.id}`);
 	};
 
 	const onMutate = (e) => {
