@@ -22,12 +22,13 @@ function Listing() {
 
 			if (docSnap.exists()) {
 				setListing(docSnap.data());
+				console.log(docSnap.data());
 				setLoading(false);
 			}
 		};
 
 		fetchListing();
-	}, [navigate, params.lostingId]);
+	}, [navigate, params.listingId]);
 
 	if (loading) {
 		return <Spinner />;
