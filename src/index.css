@@ -94,6 +94,12 @@ button {
 .explore {
 	margin: 1rem;
 }
+
+.profileListings {
+	margin: 0;
+	padding: 0;
+}
+
 @media (min-width: 1024px) {
 	.pageContainer,
 	.offers,
